@@ -5,10 +5,6 @@ import {
 } from 'firebase/auth'
 import { auth } from '../firebase'
 
-const TICKER_ITEMS = [
-  'HOCKEY', 'BASKETBALL', 'SOCCER', 'FOOTBALL', 'BASEBALL', 'TENNIS', 'MMA', 'GAMING',
-]
-
 export default function Login() {
   const [mode, setMode] = useState('login') // 'login' | 'signup'
   const [email, setEmail] = useState('')
@@ -26,7 +22,6 @@ export default function Login() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password)
       }
-      // onAuthStateChanged in App.jsx picks up the new session from here.
     } catch (err) {
       setError(friendlyError(err.code))
     } finally {
@@ -35,54 +30,34 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-screen">
-      <div className="auth-panel-brand">
-        <div className="auth-eyebrow">SPORTSNAP</div>
-        <h1 className="auth-hero-heading">
-          Every game.
+    <div className="split-screen">
+      <div className="split-side">
+        <div className="split-side-mark">
+          Sport<span>Snap</span>
+        </div>
+        <p className="split-side-line">
+          One account.
           <br />
-          Every fan.
+          A space for every sport you're into.
           <br />
-          <span>One feed.</span>
-        </h1>
-        <p className="auth-hero-sub">
-          Join spaces for the teams and sports you actually care about.
+          Nothing else in your feed.
         </p>
-        <div className="auth-ticker-wrap">
-          <div className="auth-ticker">
-            {[...TICKER_ITEMS, ...TICKER_ITEMS].map((t, i) => (
-              <span key={i}>{t}</span>
-            ))}
-          </div>
+        <div className="split-side-tiles">
+          <div className="split-tile">🏀</div>
+          <div className="split-tile">⚽</div>
+          <div className="split-tile">🏒</div>
+          <div className="split-tile">🎮</div>
         </div>
       </div>
 
-      <div className="auth-panel-form">
-        <div className="auth-card">
-          <h1 className="auth-wordmark auth-wordmark-mobile">
+      <div className="split-form-side">
+        <div className="split-form-card">
+          <h1 className="auth-wordmark mobile-only">
             Sport<span>Snap</span>
           </h1>
-
-          <div className="auth-mode-tabs">
-            <button
-              type="button"
-              className={mode === 'login' ? 'active' : ''}
-              onClick={() => setMode('login')}
-            >
-              Log in
-            </button>
-            <button
-              type="button"
-              className={mode === 'signup' ? 'active' : ''}
-              onClick={() => setMode('signup')}
-            >
-              Sign up
-            </button>
-          </div>
-
-          <p className="auth-tagline">
-            {mode === 'login' ? 'Welcome back to the locker room.' : 'Pick a username later, get in first.'}
-          </p>
+          <h2 className="split-form-title">
+            {mode === 'login' ? 'Log in' : 'Create your account'}
+          </h2>
 
           <form className="auth-form" onSubmit={submit}>
             {error && <div className="auth-error">{error}</div>}
@@ -117,19 +92,18 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="auth-switch">
-            {mode === 'login' ? (
-              <>
-                New here?{' '}
-                <button onClick={() => setMode('signup')}>Create an account</button>
-              </>
-            ) : (
-              <>
-                Already have one?{' '}
-                <button onClick={() => setMode('login')}>Log in</button>
-              </>
-            )}
+          <div className="split-divider">
+            <span />
+            <span>or</span>
+            <span />
           </div>
+
+          <button
+            className="btn btn-ghost btn-block"
+            onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+          >
+            {mode === 'login' ? 'Create new account' : "I already have an account"}
+          </button>
         </div>
       </div>
     </div>

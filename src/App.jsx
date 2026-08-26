@@ -5,10 +5,11 @@ import { api } from './api'
 
 import Login from './components/Login'
 import UsernameSetup from './components/UsernameSetup'
-import SpacePicker from './components/SpacePicker'
+import CategoryPicker from './components/CategoryPicker'
 import SpaceSwitcher from './components/SpaceSwitcher'
 import Feed from './components/Feed'
-import Discover from './components/Discover'
+import Chat from './components/Chat'
+import Profile from './components/Profile'
 import Compose from './components/Compose'
 
 export default function App() {
@@ -18,7 +19,7 @@ export default function App() {
 
   const [spaces, setSpaces] = useState([])
   const [activeSpace, setActiveSpace] = useState(null)
-  const [view, setView] = useState('feed') // 'feed' | 'discover'
+  const [tab, setTab] = useState('feed') // 'feed' | 'chat' | 'profile'
   const [composing, setComposing] = useState(false)
 
   const [posts, setPosts] = useState([])
@@ -68,7 +69,7 @@ export default function App() {
 
   useEffect(() => {
     if (activeSpace) {
-      setView('feed')
+      setTab('feed')
       loadFeed(activeSpace)
     }
   }, [activeSpace, loadFeed])
@@ -101,7 +102,7 @@ export default function App() {
 
   if (!activeSpace) {
     return (
-      <SpacePicker
+      <CategoryPicker
         spaces={spaces}
         onEnter={setActiveSpace}
         onCreate={handleCreateSpace}
@@ -117,7 +118,7 @@ export default function App() {
         </div>
         <div className="top-bar-actions">
           <span className="eyebrow">@{profile.username}</span>
-          <button className="icon-btn" onClick={() => setActiveSpace(null)} title="Switch spaces (picker)">
+          <button className="icon-btn" onClick={() => setActiveSpace(null)} title="Switch spaces">
             ⌂
           </button>
           <button className="icon-btn" onClick={() => signOut(auth)} title="Log out">
@@ -133,22 +134,27 @@ export default function App() {
         onAddNew={() => setActiveSpace(null)}
       />
 
-      {view === 'feed' ? (
+      {tab === 'feed' && (
         <Feed space={activeSpace} posts={posts} loading={postsLoading} onLike={handleLike} />
-      ) : (
-        <Discover space={activeSpace} />
+      )}
+      {tab === 'chat' && <Chat space={activeSpace} />}
+      {tab === 'profile' && <Profile profile={profile} space={activeSpace} />}
+
+      {tab === 'feed' && (
+        <button className="fab" onClick={() => setComposing(true)} aria-label="New post">
+          +
+        </button>
       )}
 
-      <button className="fab" onClick={() => setComposing(true)} aria-label="New post">
-        +
-      </button>
-
       <div className="bottom-nav">
-        <button className={view === 'feed' ? 'active' : ''} onClick={() => setView('feed')}>
+        <button className={tab === 'feed' ? 'active' : ''} onClick={() => setTab('feed')}>
           Feed
         </button>
-        <button className={view === 'discover' ? 'active' : ''} onClick={() => setView('discover')}>
-          Discover
+        <button className={tab === 'chat' ? 'active' : ''} onClick={() => setTab('chat')}>
+          Chat
+        </button>
+        <button className={tab === 'profile' ? 'active' : ''} onClick={() => setTab('profile')}>
+          Profile
         </button>
       </div>
 
